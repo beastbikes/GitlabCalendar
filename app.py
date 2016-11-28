@@ -6,6 +6,8 @@ import requests
 from flask import Flask, request, session
 app = Flask(__name__)
 
+logging.basicConfig(level='DEBUG')
+
 GITLAB_HOST = os.environ['GITLAB_HOST']
 GITLAB_APPID = os.environ['GITLAB_APPID']
 GITLAB_APP_SECRET = os.environ['GITLAB_APP_SECRET']
