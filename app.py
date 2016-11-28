@@ -3,8 +3,9 @@ import logging
 from datetime import datetime, timedelta
 
 import requests
-from flask import Flask, request, session
+from flask import Flask, request, session, url_for
 app = Flask(__name__)
+app.config['secret_key'] = os.environ['FLAKS_SECRET_KEY']
 
 logging.basicConfig(level='DEBUG')
 
@@ -28,13 +29,15 @@ def auth():
         "client_id": GITLAB_APPID,
         "client_secret": GITLAB_APP_SECRET,
         "code": code,
-        "grant_type": "AUTHORIZATION_CODE",
-        "redirect_uri": ""
+        "grant_type": "authorization_code",
+        "redirect_uri": url_for('.auth', _external=True)
     }
 
-    r = requests.get(url, params)
+    r = requests.post(url, params=params)
+    logging.debug('result:', url, params, r.content, r.status_code)
+    if r.status_code != 200:
+        return r.content, 400
     data = r.json()
-    logging.debug('result:', data)
     session['access_token'] = data['access_token']
     session['expires_at'] = datetime.now() + timedelta(seconds=data['expires_in'])
     session['refresh_token'] = data['refresh_token']
