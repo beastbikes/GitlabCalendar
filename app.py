@@ -114,3 +114,14 @@ def auth():
     token = GitlabToken.get_instance()
 
     return token.access_token
+
+`
+@app.route('/issues')
+def issues():
+    token = GitlabToken.get_instance()
+    url = GITLAB_HOST + '/api/v3/issues'
+    r = requests.get(url, headers={
+        "Authorization": "Bearer " + token.access_token
+    })
+
+    return r.content
