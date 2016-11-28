@@ -1,6 +1,6 @@
 FLASK_APP=app.py
 FLASK_DEBUG=1
-FLAKS_SECRET_KEY=hard to guess secret key
+FLASK_SECRET_KEY=hard to guess secret key
 GITLAB_HOST=https://gitlab.example.com
 GITLAB_APPID=
 GITLAB_APP_SECRET=

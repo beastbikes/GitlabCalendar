@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 import requests
 from flask import Flask, request, session, url_for
 app = Flask(__name__)
-app.config['secret_key'] = os.environ['FLAKS_SECRET_KEY']
+app.config['secret_key'] = os.environ['FLASK_SECRET_KEY']
 
 logging.basicConfig(level='DEBUG')
 
