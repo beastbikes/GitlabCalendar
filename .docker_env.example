@@ -1,2 +1,5 @@
 FLASK_APP=app.py
 FLASK_DEBUG=1
+GITLAB_HOST=https://gitlab.example.com
+GITLAB_APPID=
+GITLAB_APP_SECRET=
