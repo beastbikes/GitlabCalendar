@@ -7,6 +7,4 @@ services:
      - .:/code
    ports:
      - "5000:5000"
-   environment:
-     FLASK_APP: app.py
-     FLASK_DEBUG: 1
+   env_file: .docker_env
