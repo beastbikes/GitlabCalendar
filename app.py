@@ -3,7 +3,9 @@ import logging
 from datetime import datetime, timedelta
 
 import requests
-from flask import Flask, request, session, url_for, redirect, abort
+from flask import Flask, request, session, url_for, redirect, abort, jsonify
+
+
 app = Flask(__name__)
 app.secret_key = os.environ['FLASK_SECRET_KEY']
 
@@ -115,13 +117,35 @@ def auth():
 
     return token.access_token
 
-`
+
 @app.route('/issues')
 def issues():
     token = GitlabToken.get_instance()
-    url = GITLAB_HOST + '/api/v3/issues'
+    url = GITLAB_HOST + '/api/v3/issues?labels=calendar'
     r = requests.get(url, headers={
         "Authorization": "Bearer " + token.access_token
     })
 
-    return r.content
+    return jsonify(r.json())
+
+
+@app.route('/milestones')
+def api_milestones():
+    token = GitlabToken.get_instance()
+    url = GITLAB_HOST + '/api/v3/projects'
+    r = requests.get(url, headers={
+        "Authorization": "Bearer " + token.access_token
+    })
+
+    milestones = []
+    for project in r.json():
+        url = GITLAB_HOST + '/api/v3/projects/%s/milestones' % project['id']
+        r = requests.get(url, headers={
+            "Authorization": "Bearer " + token.access_token
+        })
+        logging.debug('milestones: %s' % r.content)
+        if r.json():
+            milestones += r.json()
+
+    return jsonify(milestones)
+
