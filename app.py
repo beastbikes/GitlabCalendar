@@ -149,3 +149,34 @@ def api_milestones():
 
     return jsonify(milestones)
 
+
+@app.route('/api/calendar')
+def api_calendar():
+    token = GitlabToken.get_instance()
+    url = GITLAB_HOST + '/api/v3/projects'
+    r = requests.get(url, headers={
+        "Authorization": "Bearer " + token.access_token
+    })
+
+    milestones = []
+    for project in r.json():
+        url = GITLAB_HOST + '/api/v3/projects/%s/milestones' % project['id']
+        r = requests.get(url, headers={
+            "Authorization": "Bearer " + token.access_token
+        })
+        logging.debug('milestones: %s' % r.content)
+        if r.json():
+            milestones += r.json()
+
+    events = []
+    for milestone in milestones:
+        data = {
+            "title": milestone.get('title'),
+            "start": milestone.get('created_at')[:10]
+        }
+
+        if milestone.get('due_date'):
+            data["end"] = milestone.get('due_date')
+
+        events.append(data)
+    return jsonify(events)

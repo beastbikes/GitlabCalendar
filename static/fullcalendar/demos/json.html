@@ -22,7 +22,7 @@
 			navLinks: true, // can click day/week names to navigate views
 			eventLimit: true, // allow "more" link when too many events
 			events: {
-				url: 'php/get-events.php',
+				url: '/api/calendar',
 				error: function() {
 					$('#script-warning').show();
 				}
@@ -74,7 +74,7 @@
 <body>
 
 	<div id='script-warning'>
-		<code>php/get-events.php</code> must be running.
+		<code>/api/calendar</code> must be running.
 	</div>
 
 	<div id='loading'>loading...</div>
