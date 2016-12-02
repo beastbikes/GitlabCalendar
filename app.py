@@ -50,7 +50,7 @@ class GitlabToken(object):
             "client_secret": GITLAB_APP_SECRET,
             "code": code,
             "grant_type": "authorization_code",
-            "redirect_uri": url_for('.auth', _external=True)
+            "redirect_uri": url_for('.index', _external=True)
         }
 
         r = requests.post(url, params=params)
