@@ -2,7 +2,7 @@ version: '2'
 services:
  web:
    build: .
-   command: python server.py
+   command: flask run
    volumes:
      - .:/code
    ports:
