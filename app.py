@@ -3,7 +3,7 @@ import logging
 from datetime import datetime, timedelta
 
 import requests
-from flask import Flask, request, session, url_for, redirect, abort, jsonify
+from flask import Flask, request, session, url_for, redirect, abort, jsonify, render_template
 
 
 app = Flask(__name__)
@@ -20,7 +20,7 @@ GITLAB_APP_SECRET = os.environ['GITLAB_APP_SECRET']
 @app.errorhandler(401)
 def not_login_handler(error):
     url = GITLAB_HOST + '/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code'
-    auth_url = url_for('.auth', _external=True)
+    auth_url = url_for('.index', _external=True)
     url = url.format(client_id=GITLAB_APPID, redirect_uri=auth_url)
     return redirect(url)
 
@@ -106,9 +106,9 @@ class GitlabToken(object):
 
 
 @app.route('/')
-def hello_world():
-    logging.debug('hello world')
-    return 'Hello, World!'
+def index():
+    token = GitlabToken.get_instance()
+    return render_template('index.html')
 
 
 @app.route('/auth')
@@ -166,12 +166,19 @@ def api_calendar():
         data = {
             "title": issue.get('title'),
             "start": issue.get('created_at')[:10],
-            "backgroundColor": "#00a65a",
-            "borderColor": "#00a65a"
         }
 
-        if issue.get('due_date'):
-            data["end"] = issue.get('due_date')
+        if issue.get('state') == 'closed':
+            data['backgroundColor'] = '#00a65a'
+            data['borderColor'] = '#00a65a'
+
+        due_date = issue.get('due_date')
+        if due_date:
+            data["end"] = due_date
+            if issue.get('state') != 'closed':
+                if datetime.now() > datetime.strptime(due_date, '%Y-%m-%d'):
+                    data['backgroundColor'] = '#f56954'
+                    data['borderColor'] = '#f56954'
 
         events.append(data)
 
