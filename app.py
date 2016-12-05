@@ -153,7 +153,7 @@ def api_calendar():
     events = []
 
     token = GitlabToken.get_instance()
-    url = GITLAB_HOST + '/api/v3/groups/%s/issues?per_page=100' % current_group_id
+    url = GITLAB_HOST + '/api/v3/groups/%s/issues?per_page=100&state=all' % current_group_id
     logging.debug('url: %s' % url)
     r = requests.get(url, headers={
         "Authorization": "Bearer " + token.access_token
