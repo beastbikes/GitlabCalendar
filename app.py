@@ -16,6 +16,14 @@ GITLAB_HOST = os.environ['GITLAB_HOST']
 GITLAB_APPID = os.environ['GITLAB_APPID']
 GITLAB_APP_SECRET = os.environ['GITLAB_APP_SECRET']
 
+# time tags value is hour for this tag
+DATE_TAGS = {
+    '0.25D': 2,
+    '0.5D': 5,
+    '1D': 24,
+    '2D': 48,
+}
+
 
 @app.errorhandler(401)
 def not_login_handler(error):
@@ -108,25 +116,13 @@ class GitlabToken(object):
 @app.route('/')
 def index():
     token = GitlabToken.get_instance()
-    return render_template('index.html')
-
-
-@app.route('/auth')
-def auth():
-    token = GitlabToken.get_instance()
-
-    return token.access_token
-
-
-@app.route('/issues')
-def issues():
-    token = GitlabToken.get_instance()
-    url = GITLAB_HOST + '/api/v3/issues?labels=calendar'
+    url = GITLAB_HOST + '/api/v3/groups'
     r = requests.get(url, headers={
         "Authorization": "Bearer " + token.access_token
     })
-
-    return jsonify(r.json())
+    logging.debug('groups: %s' % r.content.decode())
+    current_group_id = r.json()[0]['id'] if 'current_group_id' not in session else session['current_group_id']
+    return render_template('index.html', groups=r.json(), current_group_id=int(current_group_id))
 
 
 @app.route('/milestones')
@@ -152,15 +148,18 @@ def api_milestones():
 
 @app.route('/api/calendar')
 def api_calendar():
+    current_group_id = request.args.get('current_group_id')
+    session['current_group_id'] = current_group_id
     events = []
 
     token = GitlabToken.get_instance()
-    url = GITLAB_HOST + '/api/v3/issues?labels=calendar&per_page=100'
+    url = GITLAB_HOST + '/api/v3/groups/%s/issues?per_page=100' % current_group_id
+    logging.debug('url: %s' % url)
     r = requests.get(url, headers={
         "Authorization": "Bearer " + token.access_token
     })
 
-    logging.debug('result issues: %s' % r.json())
+    logging.debug('result issues: %s' % r.content.decode())
 
     for issue in r.json():
         data = {
@@ -174,9 +173,25 @@ def api_calendar():
 
         due_date = issue.get('due_date')
         if due_date:
+            due_date_time = datetime.strptime(due_date, '%Y-%m-%d')
             data["end"] = due_date
+            labels = issue.get('labels')
+            if labels:
+                for label in labels:
+                    date_tag = DATE_TAGS.get(label)
+                    if date_tag:
+                        data['start'] = due_date_time - timedelta(hours=date_tag)
+                        data['title'] += label
+                        break
+                else:
+                    data['backgroundColor'] = '#ad8d43'
+                    data['borderColor'] = '#ad8d43'
+            else:
+                data['backgroundColor'] = '#ad8d43'
+                data['borderColor'] = '#ad8d43'
+
             if issue.get('state') != 'closed':
-                if datetime.now() > datetime.strptime(due_date, '%Y-%m-%d'):
+                if datetime.now() > due_date_time:
                     data['backgroundColor'] = '#f56954'
                     data['borderColor'] = '#f56954'
 

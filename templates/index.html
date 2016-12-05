@@ -10,6 +10,19 @@
 <script>
 
 	$(document).ready(function() {
+		var load_data = function (group_id) {
+			console.log('load data. group_id:', group_id);
+
+			var url = '/api/calendar?current_group_id=' + group_id;
+			$('#loading').toggle();
+			$.get(url, function (data) {
+				$('#loading').toggle();
+				console.log('result', data);
+				$('#calendar').fullCalendar('removeEvents');
+				$('#calendar').fullCalendar('addEventSource', data);
+				$('#calendar').fullCalendar('rerenderEvents');
+			});
+		};
 
 		$('#calendar').fullCalendar({
 			header: {
@@ -19,19 +32,21 @@
 			},
 			defaultDate: new Date(),
 			editable: false,
-			navLinks: true, // can click day/week names to navigate views
-			eventLimit: false, // allow "more" link when too many events
-			events: {
-				url: '/api/calendar',
-				error: function() {
-					$('#script-warning').show();
-				}
-			},
+			navLinks: true,
+			eventLimit: false,
+			events: [],
 			loading: function(bool) {
 				$('#loading').toggle(bool);
 			}
 		});
 
+		load_data('{{ current_group_id }}');
+
+		$(".groups").click(function () {
+			var group_id = $(this).val();
+			console.log('click group:', group_id);
+			load_data(group_id);
+		});
 	});
 
 </script>
@@ -80,10 +95,16 @@
 	<div id='loading'>loading...</div>
 	<div id='calendar'></div>
     <div>
+        {% for group in groups %}
+            <input type="radio" name="groups" class="groups" value="{{ group.id }}"
+				   alt="{{ group.name }}"
+				   {% if current_group_id == group.id %}checked{% endif %}> {{ group.name }}
+        {% endfor %}
 		<ul>
 			<li style="color: #f56954">红色代表过期的任务</li>
 			<li style="color: #00a65a">绿色代表已完成的任务</li>
 			<li style="color: #3a87ad">蓝色代表进行中的任务</li>
+			<li style="color: #ad8d43">酱色代表未标记日期的任务</li>
 		</ul>
         TIPS：将需要添加到日历的问题添加上标签<code>calendar</code>即可在该日历查看
 	</div>
