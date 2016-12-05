@@ -120,9 +120,11 @@ def index():
     r = requests.get(url, headers={
         "Authorization": "Bearer " + token.access_token
     })
+    data = reversed(r.json())
     logging.debug('groups: %s' % r.content.decode())
-    current_group_id = r.json()[0]['id'] if 'current_group_id' not in session else session['current_group_id']
-    return render_template('index.html', groups=r.json(), current_group_id=int(current_group_id))
+    current_group_id = data[0]['id'] if 'current_group_id' not in session else session['current_group_id']
+
+    return render_template('index.html', groups=data, current_group_id=int(current_group_id))
 
 
 @app.route('/milestones')
