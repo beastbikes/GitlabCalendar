@@ -24,6 +24,8 @@ DATE_TAGS = {
     '2D': 48,
 }
 
+DATE_FORMAT = '%Y-%m-%d'
+
 
 @app.errorhandler(401)
 def not_login_handler(error):
@@ -176,14 +178,20 @@ def api_calendar():
 
         due_date = issue.get('due_date')
         if due_date:
-            due_date_time = datetime.strptime(due_date, '%Y-%m-%d')
+            due_date_time = datetime.strptime(due_date, DATE_FORMAT)
             data["end"] = due_date
             labels = issue.get('labels')
             if labels:
                 for label in labels:
                     date_tag = DATE_TAGS.get(label)
+                    fixed_start = due_date_time - timedelta(hours=date_tag)
+                    if fixed_start.hour == 0:
+                        fixed_start = fixed_start.strftime(DATE_FORMAT)
+                    else:
+                        data['allDay'] = False
+
                     if date_tag:
-                        data['start'] = due_date_time - timedelta(hours=date_tag)
+                        data['start'] = fixed_start
                         data['title'] += label
                         break
                 else:
