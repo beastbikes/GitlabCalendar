@@ -167,6 +167,7 @@ def api_calendar():
         data = {
             "title": issue.get('title'),
             "start": issue.get('created_at')[:10],
+            "allDay": True,
         }
 
         if issue.get('state') == 'closed':
