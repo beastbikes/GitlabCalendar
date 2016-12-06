@@ -184,13 +184,10 @@ def api_calendar():
             if labels:
                 for label in labels:
                     date_tag = DATE_TAGS.get(label)
-                    fixed_start = due_date_time - timedelta(hours=date_tag)
-                    if fixed_start.hour == 0:
-                        fixed_start = fixed_start.strftime(DATE_FORMAT)
-                    else:
-                        data['allDay'] = False
-
                     if date_tag:
+                        fixed_start = due_date_time - timedelta(hours=date_tag)
+                        fixed_start = fixed_start.strftime(DATE_FORMAT)
+
                         data['start'] = fixed_start
                         data['title'] += label
                         break
