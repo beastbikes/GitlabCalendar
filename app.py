@@ -172,6 +172,9 @@ def api_calendar():
             "allDay": True,
         }
 
+        if issue.get('assignee'):
+            data['title'] += '（%s）' % issue['assignee']['name']
+
         if issue.get('state') == 'closed':
             data['backgroundColor'] = '#00a65a'
             data['borderColor'] = '#00a65a'
@@ -189,7 +192,7 @@ def api_calendar():
                         fixed_start = fixed_start.strftime(DATE_FORMAT)
 
                         data['start'] = fixed_start
-                        data['title'] += label
+                        data['title'] += '<i class="fa fa-clock-o" aria-hidden="true"></i>' * int(date_tag / 0.25)
                         break
                 else:
                     data['backgroundColor'] = '#ad8d43'

@@ -3,10 +3,11 @@
 <head>
 <meta charset='utf-8' />
 <link href='../fullcalendar.css' rel='stylesheet' />
+<link href='../../font-awesome/css/font-awesome.min.css' rel='stylesheet' />
 <link href='../fullcalendar.print.css' rel='stylesheet' media='print' />
 <script src='../lib/moment.min.js'></script>
 <script src='../lib/jquery.min.js'></script>
-<script src='../fullcalendar.min.js'></script>
+<script src='../fullcalendar.js'></script>
 <script>
 
 	$(document).ready(function() {
@@ -17,7 +18,7 @@
 			eventLimit: true, // allow "more" link when too many events
 			events: [
 				{
-					title: 'All Day Event',
+					title: 'All Day Event<i class="fa fa-clock-o" aria-hidden="true"></i>',
 					start: '2016-09-01',
 					end: '2016-09-01'
 				},
