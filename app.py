@@ -181,18 +181,18 @@ def api_calendar():
 
         due_date = issue.get('due_date')
         if due_date:
-            due_date_time = datetime.strptime(due_date, DATE_FORMAT)
+            due_date_time = datetime.strptime(due_date, DATE_FORMAT) + timedelta(hours=24)
             data["end"] = due_date
             labels = issue.get('labels')
             if labels:
                 for label in labels:
                     date_tag = DATE_TAGS.get(label)
                     if date_tag:
-                        fixed_start = due_date_time + timedelta(hours=24 - date_tag)
+                        fixed_start = due_date_time + timedelta(date_tag)
                         fixed_start = fixed_start.strftime(DATE_FORMAT)
 
                         data['start'] = fixed_start
-                        data['title'] += '<i class="fa fa-clock-o" aria-hidden="true"></i>' + label
+                        data['title'] += ' <i class="fa fa-clock-o" aria-hidden="true"></i>' + label
                         break
                 else:
                     data['backgroundColor'] = '#ad8d43'
