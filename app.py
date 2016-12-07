@@ -192,7 +192,7 @@ def api_calendar():
                         fixed_start = fixed_start.strftime(DATE_FORMAT)
 
                         data['start'] = fixed_start
-                        data['title'] += '__test__ <i class="fa fa-clock-o" aria-hidden="true"></i>' + label
+                        data['title'] += ' <i class="fa fa-clock-o" aria-hidden="true"></i>' + label
                         break
                 else:
                     data['backgroundColor'] = '#ad8d43'
