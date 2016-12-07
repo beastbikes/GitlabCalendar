@@ -188,7 +188,7 @@ def api_calendar():
                 for label in labels:
                     date_tag = DATE_TAGS.get(label)
                     if date_tag:
-                        fixed_start = due_date_time - timedelta(hours=date_tag)
+                        fixed_start = due_date_time + timedelta(hours=24 - date_tag)
                         fixed_start = fixed_start.strftime(DATE_FORMAT)
 
                         data['start'] = fixed_start
