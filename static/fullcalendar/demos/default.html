@@ -11,14 +11,21 @@
 <script>
 
 	$(document).ready(function() {
+		var title = 'All Day Event <i class="fa fa-clock-o" aria-hidden="true"></i>2D ' +
+				'<i class="fa fa-user" aria-hidden="true"></i>张伯函';
 
 		$('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,basicWeek,basicDay,listWeek'
+			},
 			defaultDate: '2016-09-12',
 			editable: true,
 			eventLimit: true, // allow "more" link when too many events
 			events: [
 				{
-					title: 'All Day Event<i class="fa fa-clock-o" aria-hidden="true"></i>',
+					title: title,
 					start: '2016-09-01',
 					end: '2016-09-01'
 				},

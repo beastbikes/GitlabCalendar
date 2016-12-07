@@ -173,7 +173,7 @@ def api_calendar():
         }
 
         if issue.get('assignee'):
-            data['title'] += '（%s）' % issue['assignee']['name']
+            data['title'] += ' <i class="fa fa-user" aria-hidden="true"></i>%s' % issue['assignee']['name']
 
         if issue.get('state') == 'closed':
             data['backgroundColor'] = '#00a65a'
@@ -192,7 +192,7 @@ def api_calendar():
                         fixed_start = fixed_start.strftime(DATE_FORMAT)
 
                         data['start'] = fixed_start
-                        data['title'] += '<i class="fa fa-clock-o" aria-hidden="true"></i>' * int(date_tag / 2)
+                        data['title'] += '<i class="fa fa-clock-o" aria-hidden="true"></i>' + label
                         break
                 else:
                     data['backgroundColor'] = '#ad8d43'

@@ -13452,7 +13452,7 @@ var ListViewGrid = Grid.extend({
 			'</td>' +
 			'<td class="fc-list-item-title ' + view.widgetContentClass + '">' +
 				'<a' + (url ? ' href="' + htmlEscape(url) + '"' : '') + '>' +
-					htmlEscape(seg.event.title || '') +
+					seg.event.title +
 				'</a>' +
 			'</td>' +
 		'</tr>';
